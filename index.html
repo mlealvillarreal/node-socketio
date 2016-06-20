@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<h1>Chattr</h1>
+		<div>
+			<p id="status"></p>
+			<ul id="output" style="list-style-type: none; padding: 0;"></ul>
+		</div>
+		<form onsubmit="submitMessage(); return false;">
+			Message: 
+			<input id="chat_input" type="text">
+			<input type="submit">
+		</form>
+
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+		<script src="https://code.jquery.com/jquery-3.0.0.js" integrity="sha256-jrPLZ+8vDxt2FnE1zvZXCkCcebI/C8Dt5xyaQBjxQIo=" crossorigin="anonymous"></script>
+
+		<script type="text/javascript">
+			var server = io.connect('http://localhost:8080');
+			server.on('connect', function(data) {
+				$('#status').html('Connected to chattr');
+				nickname = prompt('What is you nickname');
+
+				// Le pasa el nickname al servidor.
+				server.emit('join', nickname);
+			});
+
+
+			function submitMessage() {
+				var $element = $('#chat_input');
+				var message = $element.val();
+				server.emit('message', message);
+				// console.log('corrio myFunc');
+			};
+
+			server.on('message', function(data) {
+				// insertMessage(data);
+				$('#output').append('<li>' + data + '</li>');
+				console.log(data);
+			});
+
+			// Deberia de funcionar en vez de el inline onsubmit
+			// var $form = $('#chat_form');
+			// $form.submit(function(e) {
+			// 	var $element = $('#chat_input');
+			// 	var message = $element.value;
+			// });
+
+			// Da accion directamente en cliente.
+
+			// Insert message debe de tener el código
+			// para poner los memsajes en el chat.
+		</script>
+	</body>
+</html>
